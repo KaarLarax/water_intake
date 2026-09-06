@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:water_intake/model/water.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -40,7 +45,12 @@ class _HomePageState extends State<HomePage> {
           ),
           TextButton(
             onPressed: () {
-              // save data to db
+              Water water = Water(
+                amount: double.parse(amountController.text),
+                unit: 'ml',
+                dateTime: DateTime.now().toUtc(),
+              );
+              // addWater(water);
               Navigator.of(context).pop();
             },
             child: const Text('Add'),
@@ -52,17 +62,19 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 4,
-        centerTitle: true,
-        actions: [IconButton(icon: Icon(Icons.map), onPressed: () {})],
-        title: const Text('Water'),
-      ),
-      backgroundColor: Theme.of(context).colorScheme.background,
-      floatingActionButton: FloatingActionButton(
-        onPressed: addWater,
-        child: const Icon(Icons.add),
+    return Consumer(
+      builder: (context, value, child) => Scaffold(
+        appBar: AppBar(
+          elevation: 4,
+          centerTitle: true,
+          actions: [IconButton(icon: Icon(Icons.map), onPressed: () {})],
+          title: const Text('Water'),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.background,
+        floatingActionButton: FloatingActionButton(
+          onPressed: addWater,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
