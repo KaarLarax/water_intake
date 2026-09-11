@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:water_intake/data/water_data.dart';
 import 'package:water_intake/pages/home.dart';
 
-
-void main() {
+Future<void> main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create:(context) => WaterData(),
+      create: (context) => WaterData(),
       child: MaterialApp(
         title: 'Water Intake',
         theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),

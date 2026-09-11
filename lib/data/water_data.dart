@@ -1,17 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:water_intake/model/water.dart';
 
 class WaterData extends ChangeNotifier {
   List<Water> waterDataList = [];
+  final _url = dotenv.get('URL_FIREBASE');
 
   void addWater(Water water) async {
-    final url = Uri.https(
-      "water-intaker-93cc3-default-rtdb.firebaseio.com",
-      'water.json',
-    );
+    final url = Uri.https(_url, 'water.json');
 
     var response = await http.post(
       url,
@@ -25,6 +24,7 @@ class WaterData extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      print('Data saved successfully: ${extractedData.toString()}');
       waterDataList.add(
         Water(
           id: extractedData['name'],
@@ -41,10 +41,7 @@ class WaterData extends ChangeNotifier {
   }
 
   Future<List<Water>> getWater() async {
-    final url = Uri.https(
-      "water-intaker-93cc3-default-rtdb.firebaseio.com",
-      'water.json',
-    );
+    final url = Uri.https(_url, 'water.json');
 
     final response = await http.get(url);
 
@@ -65,5 +62,16 @@ class WaterData extends ChangeNotifier {
 
     notifyListeners();
     return waterDataList;
+  }
+
+  void deleteWater(Water water) async {
+    final url = Uri.https(_url, 'water/${water.id}.json');
+    final response = await http.delete(url);
+    if (response.statusCode == 200) {
+      waterDataList.removeWhere((w) => w.id == water.id);
+      notifyListeners();
+    } else {
+      throw Exception('Failed to delete water data');
+    }
   }
 }

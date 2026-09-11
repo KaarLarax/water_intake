@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:water_intake/components/water_tile.dart';
 import 'package:water_intake/data/water_data.dart';
 import 'package:water_intake/model/water.dart';
 
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage> {
         dateTime: DateTime.now().toUtc(),
       ),
     );
-
+    clearWaterInput();
     if (!context.mounted) {
       return; // if the widget is no longer in the widget tree, return early to avoid calling setState
     }
@@ -87,10 +88,7 @@ class _HomePageState extends State<HomePage> {
           itemCount: value.waterDataList.length,
           itemBuilder: (context, index) {
             final waterModel = value.waterDataList[index];
-            return ListTile(
-              title: Text(waterModel.amount.toString()),
-              subtitle: Text(waterModel.id ?? 'No ID')
-            );
+            return WaterTile(waterModel: waterModel);
           },
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -100,5 +98,9 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void clearWaterInput() {
+    amountController.clear();
   }
 }
