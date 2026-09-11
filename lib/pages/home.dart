@@ -13,6 +13,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final amountController = TextEditingController(text: "");
 
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<WaterData>(context, listen: false).getWater();
+  }
+
   void saveWater() async {
     Provider.of<WaterData>(context, listen: false).addWater(
       Water(
@@ -69,13 +75,23 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
+    return Consumer<WaterData>(
       builder: (context, value, child) => Scaffold(
         appBar: AppBar(
           elevation: 4,
           centerTitle: true,
           actions: [IconButton(icon: Icon(Icons.map), onPressed: () {})],
           title: const Text('Water'),
+        ),
+        body: ListView.builder(
+          itemCount: value.waterDataList.length,
+          itemBuilder: (context, index) {
+            final waterModel = value.waterDataList[index];
+            return ListTile(
+              title: Text(waterModel.amount.toString()),
+              subtitle: Text(waterModel.id ?? 'No ID')
+            );
+          },
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
         floatingActionButton: FloatingActionButton(

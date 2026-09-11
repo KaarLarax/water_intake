@@ -19,17 +19,25 @@ class WaterData extends ChangeNotifier {
       body: json.encode({
         'amount': water.amount,
         'unit': water.unit,
-        'dataTime': water.dateTime.toUtc().toIso8601String(),
+        'dateTime': water.dateTime.toUtc().toIso8601String(),
       }),
     );
 
-    notifyListeners();
-
     if (response.statusCode == 200) {
-      print('Data saved successfully');
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      waterDataList.add(
+        Water(
+          id: extractedData['name'],
+          amount: water.amount,
+          unit: water.unit,
+          dateTime: water.dateTime.toUtc(),
+        ),
+      );
     } else {
       print('Failed to save data: ${response.statusCode}');
     }
+
+    notifyListeners();
   }
 
   Future<List<Water>> getWater() async {
@@ -48,10 +56,13 @@ class WaterData extends ChangeNotifier {
       return [];
     }
 
+    waterDataList.clear();
+
     final Map<String, dynamic> data = json.decode(response.body);
     data.forEach((id, waterData) {
       waterDataList.add(Water.fromJson(waterData, id));
     });
+
     notifyListeners();
     return waterDataList;
   }
