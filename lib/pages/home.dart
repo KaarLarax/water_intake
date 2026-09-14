@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:water_intake/components/water_intake_summary.dart';
 import 'package:water_intake/components/water_tile.dart';
 import 'package:water_intake/data/water_data.dart';
 import 'package:water_intake/model/water.dart';
@@ -13,15 +14,34 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final amountController = TextEditingController(text: "");
-
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
-    Provider.of<WaterData>(context, listen: false).getWater();
+    _loadingData();
+  }
+
+  void _loadingData() async {
+    await Provider.of<WaterData>(context, listen: false).getWater().then(
+      (waters) => {
+        if (waters.isNotEmpty)
+          {
+            setState(() {
+              isLoading = false;
+            }),
+          }
+        else
+          {
+            setState(() {
+              isLoading = false;
+            }),
+          },
+      },
+    );
   }
 
   void saveWater() async {
-    Provider.of<WaterData>(context, listen: false).addWater(
+    await Provider.of<WaterData>(context, listen: false).addWater(
       Water(
         amount: double.parse(amountController.text),
         unit: 'ml',
@@ -79,17 +99,25 @@ class _HomePageState extends State<HomePage> {
     return Consumer<WaterData>(
       builder: (context, value, child) => Scaffold(
         appBar: AppBar(
-          elevation: 4,
           centerTitle: true,
           actions: [IconButton(icon: Icon(Icons.map), onPressed: () {})],
           title: const Text('Water'),
         ),
-        body: ListView.builder(
-          itemCount: value.waterDataList.length,
-          itemBuilder: (context, index) {
-            final waterModel = value.waterDataList[index];
-            return WaterTile(waterModel: waterModel);
-          },
+        body: ListView(
+          children: [
+            WaterSummary(startOfWeek: value.startOfWeek()),
+            !isLoading
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: value.waterDataList.length,
+                    itemBuilder: (context, index) {
+                      final waterModel = value.waterDataList[index];
+                      return WaterTile(waterModel: waterModel);
+                    },
+                  )
+                : const Center(child: CircularProgressIndicator()),
+          ],
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
         floatingActionButton: FloatingActionButton(

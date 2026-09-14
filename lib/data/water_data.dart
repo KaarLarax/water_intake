@@ -9,7 +9,7 @@ class WaterData extends ChangeNotifier {
   List<Water> waterDataList = [];
   final _url = dotenv.get('URL_FIREBASE');
 
-  void addWater(Water water) async {
+  Future<void> addWater(Water water) async {
     final url = Uri.https(_url, 'water.json');
 
     var response = await http.post(
@@ -64,7 +64,31 @@ class WaterData extends ChangeNotifier {
     return waterDataList;
   }
 
-  void deleteWater(Water water) async {
+  DateTime? startOfWeek() {
+    DateTime startOfWeek, dateTime = DateTime.now();
+
+    for (int i = 0; i < 7; i++) {
+      if (getWeekDay(dateTime.subtract(Duration(days: i))) == 'Sun') {
+        startOfWeek = dateTime.subtract(Duration(days: i));
+        return startOfWeek;
+      }
+    }
+  }
+
+  String getWeekDay(DateTime date) {
+    return switch (date.weekday) {
+      1 => 'Mon',
+      2 => 'Tue',
+      3 => 'Wed',
+      4 => 'Thu',
+      5 => 'Fri',
+      6 => 'Sat',
+      7 => 'Sun',
+      _ => '',
+    };
+  }
+
+  Future<void> deleteWater(Water water) async {
     final url = Uri.https(_url, 'water/${water.id}.json');
     final response = await http.delete(url);
     if (response.statusCode == 200) {
