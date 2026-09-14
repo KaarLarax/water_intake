@@ -55,7 +55,7 @@ class BarGraph extends StatelessWidget {
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                getTitlesWidget: getBottomTitlesWidget,
+                //getTitlesWidget: getBottomTitlesWidget,
               ),
             ),
           ),
@@ -89,10 +89,11 @@ class BarGraph extends StatelessWidget {
     );
   }
 
-  Widget getBottomTitlesWidget(double value, TitleMeta meta) {
-    TextStyle style = TextStyle(
-      color: Color.fromARGB(255, 24, 23, 23),
-      fontSize: 12,
-    );
-  }
+  //   Widget getBottomTitlesWidget(double value, TitleMeta meta) {
+  //     TextStyle style = TextStyle(
+  //       color: Color.fromARGB(255, 24, 23, 23),
+  //       fontSize: 12,
+  //     );
+  //   }
+  // }
 }
