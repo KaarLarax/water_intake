@@ -73,6 +73,7 @@ class WaterData extends ChangeNotifier {
         return startOfWeek;
       }
     }
+    return null;
   }
 
   String getWeekDay(DateTime date) {
