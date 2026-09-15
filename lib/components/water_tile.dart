@@ -10,6 +10,7 @@ class WaterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localDate = waterModel.dateTime.toLocal();
     return Card(
       elevation: 4,
       child: ListTile(
@@ -23,7 +24,7 @@ class WaterTile extends StatelessWidget {
           ],
         ),
         subtitle: Text(
-          '${waterModel.dateTime.toLocal().day}/${waterModel.dateTime.toLocal().month}',
+          '${localDate.day}/${localDate.month}',
         ),
         trailing: IconButton(
           icon: Icon(Icons.delete),
