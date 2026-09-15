@@ -23,13 +23,14 @@ class WaterTile extends StatelessWidget {
             ),
           ],
         ),
-        subtitle: Text(
-          '${localDate.day}/${localDate.month}',
-        ),
+        subtitle: Text('${localDate.day}/${localDate.month}/${localDate.year}'),
         trailing: IconButton(
           icon: Icon(Icons.delete),
           onPressed: () {
-           Provider.of<WaterData>(context, listen: false).deleteWater(waterModel);
+            Provider.of<WaterData>(
+              context,
+              listen: false,
+            ).deleteWater(waterModel);
           },
         ),
       ),

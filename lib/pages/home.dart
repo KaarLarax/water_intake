@@ -97,34 +97,49 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<WaterData>(
-      builder: (context, value, child) => Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          actions: [IconButton(icon: Icon(Icons.map), onPressed: () {})],
-          title: const Text('Water'),
-        ),
-        body: ListView(
-          children: [
-            WaterSummary(startOfWeek: value.startOfWeek()),
-            !isLoading
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: value.waterDataList.length,
-                    itemBuilder: (context, index) {
-                      final waterModel = value.waterDataList[index];
-                      return WaterTile(waterModel: waterModel);
-                    },
-                  )
-                : const Center(child: CircularProgressIndicator()),
-          ],
-        ),
-        backgroundColor: Theme.of(context).colorScheme.background,
-        floatingActionButton: FloatingActionButton(
-          onPressed: addWater,
-          child: const Icon(Icons.add),
-        ),
-      ),
+      builder: (context, value, child) {
+        final WeeklyWaterIntake = value.calculateWeeklyWaterIntake(value);
+        return Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            actions: [IconButton(icon: Icon(Icons.map), onPressed: () {})],
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Weekly ', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  '$WeeklyWaterIntake ml',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          body: ListView(
+            children: [
+              WaterSummary(startOfWeek: value.startOfWeek()),
+              !isLoading
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: value.waterDataList.length,
+                      itemBuilder: (context, index) {
+                        final waterModel = value.waterDataList[index];
+                        return WaterTile(waterModel: waterModel);
+                      },
+                    )
+                  : const Center(child: CircularProgressIndicator()),
+            ],
+          ),
+          backgroundColor: Theme.of(context).colorScheme.background,
+          floatingActionButton: FloatingActionButton(
+            onPressed: addWater,
+            child: const Icon(Icons.add),
+          ),
+        );
+      },
     );
   }
 
