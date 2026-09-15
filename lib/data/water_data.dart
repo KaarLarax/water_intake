@@ -19,7 +19,7 @@ class WaterData extends ChangeNotifier {
       body: json.encode({
         'amount': water.amount,
         'unit': water.unit,
-        'dateTime': water.dateTime.toUtc().toIso8601String(),
+        'dateTime': water.dateTime.toIso8601String(),
       }),
     );
 
@@ -31,7 +31,7 @@ class WaterData extends ChangeNotifier {
           id: extractedData['name'],
           amount: water.amount,
           unit: water.unit,
-          dateTime: water.dateTime.toUtc(),
+          dateTime: water.dateTime,
         ),
       );
     } else {
@@ -66,7 +66,9 @@ class WaterData extends ChangeNotifier {
   }
 
   DateTime? startOfWeek() {
-    DateTime startOfWeek, dateTime = DateTime.now();
+    DateTime now = DateTime.now();
+    DateTime dateTime = DateTime(now.year, now.month, now.day);
+    DateTime startOfWeek;
 
     for (int i = 0; i < 7; i++) {
       if (getWeekDay(dateTime.subtract(Duration(days: i))) == 'Sun') {
@@ -113,10 +115,10 @@ class WaterData extends ChangeNotifier {
   }
 
   // Caculate the daily water intake for the current day
-  Map<String, double> calculateDailyWaterIntake(WaterData waterData) {
+  Map<String, double> calculateDailyWaterIntake() {
     Map<String, double> dailyWaterSummary = {};
 
-    for (var water in waterData.waterDataList) {
+    for (var water in waterDataList) {
 
       String date = convertDateTimeToString(water.dateTime.toLocal());
       double amount = double.parse(water.amount.toString());
@@ -131,5 +133,13 @@ class WaterData extends ChangeNotifier {
 
     }
     return dailyWaterSummary;
+  }
+
+  double calculateMaxWeeklyIntake() {
+    final daily = calculateDailyWaterIntake();
+    if (daily.isEmpty) return 100.0;
+    double maxVal = daily.values.reduce((a, b) => a > b ? a : b);
+    double adjustedMax = (maxVal * 1.2).ceilToDouble();
+    return adjustedMax > 100.0 ? adjustedMax : 100.0;
   }
 }
