@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:water_intake/bars/bar_data.dart';
-import 'package:water_intake/bars/individual_bar.dart';
 
 class BarGraph extends StatelessWidget {
   final double maxY;
