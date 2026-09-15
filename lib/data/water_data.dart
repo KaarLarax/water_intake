@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:water_intake/model/water.dart';
+import 'package:water_intake/utils/date_helper.dart';
 
 class WaterData extends ChangeNotifier {
   List<Water> waterDataList = [];
@@ -98,5 +99,37 @@ class WaterData extends ChangeNotifier {
     } else {
       throw Exception('Failed to delete water data');
     }
+  }
+
+  // Calculate the weekly water intake for the current week
+  String calculateWeeklyWaterIntake(WaterData waterData) {
+    double totalIntake = 0.0;
+    for (var water in waterData.waterDataList) {
+      if (water.dateTime.isAfter(startOfWeek()!)) {
+        totalIntake += double.parse(water.amount.toString());
+      }
+    }
+    return totalIntake.toStringAsFixed(2);
+  }
+
+  // Caculate the daily water intake for the current day
+  Map<String, double> calculateDailyWaterIntake(WaterData waterData) {
+    Map<String, double> dailyWaterSummary = {};
+
+    for (var water in waterData.waterDataList) {
+
+      String date = convertDateTimeToString(water.dateTime.toLocal());
+      double amount = double.parse(water.amount.toString());
+
+      if (dailyWaterSummary.containsKey(date)) {
+        double currentAmount = dailyWaterSummary[date]!;
+        currentAmount += double.parse(water.amount.toString());
+        dailyWaterSummary[date] = currentAmount;
+      } else {
+        dailyWaterSummary.addAll({date: amount});
+      }
+
+    }
+    return dailyWaterSummary;
   }
 }
